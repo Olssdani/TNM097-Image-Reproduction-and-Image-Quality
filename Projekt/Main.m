@@ -21,6 +21,7 @@ ColorDataRef(63,:) =[];
 %29
 ColorData(29,:) =[];
 ColorDataRef(29,:) =[];
+ColorDataRefXYZ =lab2xyz(ColorDataRef);
 clear ColorChart;
 clear ColorPatches;
 %% White point
@@ -30,38 +31,47 @@ WhiteRGB = WhitePoint(W);
 clear W;
 
 %% Convert data after Whitepoint
-ColorDataW = ColorData./WhiteRGB;
-ColorDataW(ColorDataW>1) = 1.0;
+ColorDataWhiteCalibrated = ColorData./WhiteRGB;
+ColorDataWhiteCalibrated(ColorDataWhiteCalibrated>1) = 1.0;
 
 
-%%
+%% Calculate difference between White calibrated and not white calibrated and directly rgb to XYZ
 %Convert patches to Cielab
-LabData =rgb2lab(ColorDataW,'WhitePoint','d65');
+LabDataWhiteCalibrated =rgb2lab(ColorDataWhiteCalibrated,'WhitePoint','d65');
+[MeanCal, MaxCAl] = Ediff(LabDataWhiteCalibrated,ColorDataRef);
 
+LabData =rgb2lab(ColorData,'WhitePoint','d65');
+[MeanUnCal, MaxUnCAl] = Ediff(LabData,ColorDataRef);
+
+%% Calculate difference between White calibrated and not white calibrated and rgb->xyz->lab
+
+XYZDataWhiteCalibrated = rgb2xyz(ColorDataWhiteCalibrated,'WhitePoint','d65');
+LabDataWhiteCalibrated = xyz2lab(XYZDataWhiteCalibrated,'WhitePoint','d65');
+[MeanCal, MaxCAl] = Ediff(LabDataWhiteCalibrated,ColorDataRef);
+
+
+XYZData = rgb2xyz(ColorData,'WhitePoint','d65');
+LabData = xyz2lab(XYZData,'WhitePoint','d65');
 [MeanUnCal, MaxUnCAl] = Ediff(LabData,ColorDataRef);
 
 
+%% Prim rose inversion
+A = pinv(ColorDataWhiteCalibrated)*ColorDataRefXYZ;
+
+XYZ_cal =ColorDataWhiteCalibrated*A;
+LabData = xyz2lab(XYZ_cal,'WhitePoint','d65');
+[Value_mean, Value_max] = Ediff(LabData,ColorDataRef);
 
 
 
+%% Regression
 
+A = Optimize_poly(ColorDataWhiteCalibrated(1:100,:)', ColorDataRefXYZ(1:100,:)');
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+%Calulate with the matrix 
+XYZ_cal_D65 =Polynomial_regression(ColorDataWhiteCalibrated',A)';
+LabData = xyz2lab(XYZ_cal_D65,'WhitePoint','d65');
+[Value_mean, Value_max] = Ediff(LabData,ColorDataRef);
 
 
 
