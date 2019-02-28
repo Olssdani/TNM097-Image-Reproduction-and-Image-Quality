@@ -10,7 +10,11 @@ function XYZ_est = Polynomial_regression(RGB,A)
 %--------------------------------------------------------------------------
 
 R=0;G=0;B=0;
-v = [1 R G B R.^2 R*G R*B G.^2 G*B B.^2 R*G*B];   % Second order +RGB-term
+%v = [1 R G B];
+%v = [1 R G B R.^2 R*G R*B G.^2 G*B B.^2];
+%v = [1 R G B R.^2 R*G R*B G.^2 G*B B.^2 R*G*B];
+v = [1 R G B R.^2 R*G R*B G.^2 G*B B.^2 R.^3 R.^2*G R.^2*B R*G.^2 R*G*B, R*B.^2 G.^3 G.^2*B G*B.^2 B.^3];   % Second order +RGB-term
+%v = [R G B R.^2 G.^2 B.^2 R*G R*B G*B R*G*B 1];
 RGB_training=RGB';
 
 Pv=zeros(length(RGB_training),length(v));
@@ -18,7 +22,11 @@ for r=1:length(RGB_training)
     R=RGB_training(r,1);
     G=RGB_training(r,2);
     B=RGB_training(r,3);
-    Pv(r,:) = [1 R G B R.^2 R*G R*B G.^2 G*B B.^2 R*G*B];   % Second order +RGB-term
+    %Pv(r,:) = [1 R G B];
+    %Pv(r,:) = [1 R G B R.^2 R*G R*B G.^2 G*B B.^2];
+    %Pv(r,:) = [1 R G B R.^2 R*G R*B G.^2 G*B B.^2 R*G*B];  
+    Pv(r,:) = [1 R G B R.^2 R*G R*B G.^2 G*B B.^2 R.^3 R.^2*G R.^2*B R*G.^2 R*G*B, R*B.^2 G.^3 G.^2*B G*B.^2 B.^3];
+    %Pv(r,:) = [R G B R.^2 G.^2 B.^2 R*G R*B G*B R*G*B 1];
 end
 
 XYZ_est = (Pv*A)';

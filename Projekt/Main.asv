@@ -76,13 +76,11 @@ LabData = xyz2lab(XYZ_cal_D65,'WhitePoint','d65');
 
 
 %% Find best 20 samples
-[best, ColorIndex] = Generic(ColorData,ColorDataRef, 40,500 );
+best = Generic(ColorData,ColorDataRef, 20,500 );
 
 
-%% Show Colors choosen
-Colors =ColorData(ColorIndex(1,:),:);
 
-showRGB(Colors)
+
 
 
 
