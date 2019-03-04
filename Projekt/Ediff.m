@@ -1,4 +1,4 @@
-function [Mean, Max] = Ediff(Color,Ref)
+function [Mean, Max, diff] = Ediff(Color,Ref)
 %EDIFF Summary of this function goes here
 %   Detailed explanation goes here
 

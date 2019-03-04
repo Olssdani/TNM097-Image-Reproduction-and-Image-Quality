@@ -1,6 +1,5 @@
 % This program takes in a couple of samples of different colors from a
 % cellphone. There after i calculates the transfer function for RGB->CIEXYZ
-
 %% Data
 %Load in data
 load('ColorChart.mat');
@@ -76,7 +75,7 @@ LabData = xyz2lab(XYZ_cal_D65,'WhitePoint','d65');
 
 
 %% Find best 20 samples
-[best, ColorIndex] = Generic(ColorData,ColorDataRef, 40,500 );
+[best, ColorIndex] = Generic(ColorData,ColorDataRef, 20, 500);
 
 
 %% Show Colors choosen

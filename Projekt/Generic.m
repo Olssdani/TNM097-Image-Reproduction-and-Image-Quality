@@ -1,4 +1,4 @@
-function [BestValue,BestIndex] = Generic(ColorData,ColorRefLab, NrOfSamples, MaxGenerations)
+function [BestValue,BestIndex ] = Generic(ColorData,ColorRefLab, NrOfSamples, MaxGenerations)
     %Get ref values in XYZ
     ColorDataRefXYZ =lab2xyz(ColorRefLab);
 
@@ -24,7 +24,8 @@ function [BestValue,BestIndex] = Generic(ColorData,ColorRefLab, NrOfSamples, Max
             Best(j,:) = [Mean, Max];
         end
         %FInd the Seed with the best Delta E
-        [~, Index] = min(Best(:,1));
+        [~, Index] = min(Best(:,mod(i,2)+1));
+        
         
         %Save the best seed and make 20 seed based on the best
         GeneIndex(1,:)  = GeneIndex(Index,:);
@@ -33,6 +34,9 @@ function [BestValue,BestIndex] = Generic(ColorData,ColorRefLab, NrOfSamples, Max
             GeneIndex(i,i-1) = randi([1 size(ColorData,1)],1,1);
         end
     end
+    
+    
+    
     BestValue =Best(Index,:);
     BestIndex = GeneIndex(1,:);
 
