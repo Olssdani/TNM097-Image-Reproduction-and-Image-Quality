@@ -5,10 +5,10 @@ function [ColorChart] = ImageProcessing(NrOfImages)
     ColorChart = zeros(NrOfImages,3);
     for i=1:1:NrOfImages
         %Lost data
-        if(i ~=29 && i ~=63&&i ~=64) 
+        %if(i ~=29 && i ~=63&&i ~=64) 
             i
            %Create filename
-           filename = sprintf('TrainData/%d%s',i, '.dng');
+           filename = sprintf('HueColors/%d%s',i, '.dng');
            %Read image and make to double
            Im = im2double(imread(filename));
            imshow(Im);
@@ -23,12 +23,12 @@ function [ColorChart] = ImageProcessing(NrOfImages)
            RGB(1,3) = mean(mean(Im(y-1:y+1,x-1:x+1,3)));
 
            ColorChart(i,:)= RGB;
-        else
-              ColorChart(i,:)= [0,0,0];
-        end
+       % else
+       %       ColorChart(i,:)= [0,0,0];
+       % end
         
     end
-    save('ColorChart.mat','ColorChart')
+    save('HueColorsData.mat','ColorChart')
     
     
     

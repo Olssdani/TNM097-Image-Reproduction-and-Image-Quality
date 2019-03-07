@@ -6,8 +6,8 @@ function [RGB] = WhitePoint(Image)
            x = round(x);
            y = round(y);
            %Take a small area around the pixel and get the mean value
-           RGB(1,1) = mean(mean(Image(y-1:y+1,x-1:x+1,1)));
-           RGB(1,2) = mean(mean(Image(y-1:y+1,x-1:x+1,2)));
-           RGB(1,3) = mean(mean(Image(y-1:y+1,x-1:x+1,3)));
+           RGB(1,1) = mean(mean(Image(y-2:y+2,x-2:x+2,1)));
+           RGB(1,2) = mean(mean(Image(y-2:y+2,x-2:x+2,2)));
+           RGB(1,3) = mean(mean(Image(y-2:y+2,x-2:x+2,3)));
 end
 

@@ -2,37 +2,7 @@
 % cellphone. There after i calculates the transfer function for RGB->CIEXYZ
 %% Data
 %Load in data
-load('ColorChart.mat');
-load('ColorPatches.mat');
-ColorDataRef = ColorPatches;
-
-%% ReMapping
-% Remap the data because some data was lost during processing and has to be
-% taken away. The colorPathces that was lost is 29, 63 and 64
-ColorData = ColorChart;
-ColorDataRef = ColorPatches;
-%64
-ColorData(64,:) =[];
-ColorDataRef(64,:) =[];
-%63
-ColorData(63,:) =[];
-ColorDataRef(63,:) =[];
-%29
-ColorData(29,:) =[];
-ColorDataRef(29,:) =[];
-ColorDataRefXYZ =lab2xyz(ColorDataRef);
-clear ColorChart;
-clear ColorPatches;
-%% White point
-%Load and examine the white point
-W = im2double(imread('TrainData/vit.dng'));
-WhiteRGB = WhitePoint(W);
-clear W;
-
-%% Convert data after Whitepoint
-ColorDataWhiteCalibrated = ColorData./WhiteRGB;
-ColorDataWhiteCalibrated(ColorDataWhiteCalibrated>1) = 1.0;
-
+[HueColorRefXYZ,HueColorRefLab,HueColors, ColorRefXYZ, ColorRefLab, Colors] = DataLoading();
 
 %% Calculate difference between White calibrated and not white calibrated and directly rgb to XYZ
 %Convert patches to Cielab
@@ -75,13 +45,20 @@ LabData = xyz2lab(XYZ_cal_D65,'WhitePoint','d65');
 
 
 %% Find best 20 samples
-[best, ColorIndex] = Generic(ColorData,ColorDataRef, 20, 500);
+[best, ColorIndex] = Generic(HueColors,HueColorRefLab, 10, 2000);
 
 
+%%
+ColorGene = HueColors(ColorIndex(1,:),:);
+A = Optimize_poly_SignalDep(ColorGene', HueColorRefXYZ(ColorIndex(1,:),:)');
+
+XYZ_cal_D65 =Polynomial_regression_SignalDep(HueColors',A)';
+LabData = xyz2lab(XYZ_cal_D65,'WhitePoint','d65');
+[Value_mean, Value_max] = Ediff(LabData,HueColorRefLab);
 %% Show Colors choosen
-Colors =ColorData(ColorIndex(1,:),:);
+ColorsChosen =HueColors(ColorIndex(1,:),:);
 
-showRGB(Colors)
+showRGB(ColorsChosen)
 
 
 

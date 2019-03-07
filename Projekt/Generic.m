@@ -17,8 +17,8 @@ function [BestValue,BestIndex ] = Generic(ColorData,ColorRefLab, NrOfSamples, Ma
             ColorGene = ColorData(GeneIndex(j,:),:);
               
             %Create the matrix for transforming RGB to XYZ
-            A = Optimize_poly(ColorGene', ColorDataRefXYZ(GeneIndex(j,:),:)');
-            XYZ_cal_D65 =Polynomial_regression(ColorData',A)';
+            A = Optimize_poly_SignalDep(ColorGene', ColorDataRefXYZ(GeneIndex(j,:),:)');
+            XYZ_cal_D65 =Polynomial_regression_SignalDep(ColorData',A)';
             LabData = xyz2lab(XYZ_cal_D65,'WhitePoint','d65');
             [Mean, Max] = Ediff(LabData,ColorRefLab);
             Best(j,:) = [Mean, Max];
