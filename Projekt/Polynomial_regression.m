@@ -10,6 +10,7 @@ function XYZ_est = Polynomial_regression(RGB,A)
 %--------------------------------------------------------------------------
 
 R=0;G=0;B=0;
+%v = [B G R 1];
 %v = [1 R G B];
 %v = [1 R G B R.^2 R*G R*B G.^2 G*B B.^2];
 %v = [1 R G B R.^2 R*G R*B G.^2 G*B B.^2 R*G*B];
@@ -22,6 +23,7 @@ for r=1:length(RGB_training)
     R=RGB_training(r,1);
     G=RGB_training(r,2);
     B=RGB_training(r,3);
+    %Pv(r,:) = [B G R 1];
     %Pv(r,:) = [1 R G B];
     %Pv(r,:) = [1 R G B R.^2 R*G R*B G.^2 G*B B.^2];
     %Pv(r,:) = [1 R G B R.^2 R*G R*B G.^2 G*B B.^2 R*G*B];  

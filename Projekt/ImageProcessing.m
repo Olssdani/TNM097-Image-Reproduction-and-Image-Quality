@@ -2,13 +2,13 @@ function [ColorChart] = ImageProcessing(NrOfImages)
     %Read all images and return just one rgb value for each image. The area
     %of the image that is taken is chosed by the user. The colorvalue is a
     %mean value of an area of 3*3 pixels.
-    ColorChart = zeros(NrOfImages,3);
+    ColorChartV2 = zeros(NrOfImages,3);
     for i=1:1:NrOfImages
         %Lost data
         %if(i ~=29 && i ~=63&&i ~=64) 
             i
            %Create filename
-           filename = sprintf('HueColors/%d%s',i, '.dng');
+           filename = sprintf('Ny_Klar/%d%s',i, '.dng');
            %Read image and make to double
            Im = im2double(imread(filename));
            imshow(Im);
@@ -22,13 +22,13 @@ function [ColorChart] = ImageProcessing(NrOfImages)
            RGB(1,2) = mean(mean(Im(y-1:y+1,x-1:x+1,2)));
            RGB(1,3) = mean(mean(Im(y-1:y+1,x-1:x+1,3)));
 
-           ColorChart(i,:)= RGB;
+           ColorChartV2(i,:)= RGB;
        % else
        %       ColorChart(i,:)= [0,0,0];
        % end
         
     end
-    save('HueColorsData.mat','ColorChart')
+    save('ColorsV2.mat','ColorChartV2')
     
     
     

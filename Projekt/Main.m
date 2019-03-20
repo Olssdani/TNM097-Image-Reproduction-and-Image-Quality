@@ -2,50 +2,75 @@
 % cellphone. There after i calculates the transfer function for RGB->CIEXYZ
 %% Data
 %Load in data
-[HueColorRefXYZ,HueColorRefLab,HueColors, ColorRefXYZ, ColorRefLab, Colors] = DataLoading();
+[HueColorRefXYZ,HueColorRefLab,HueColors, ColorRefXYZ, ColorRefLab, Colors,ColorReV2fXYZ, ColorV2RefLab, ColorsV2 ] = DataLoading();
+
+% Read in data from spektro
+
+
+
 
 %% Calculate difference between White calibrated and not white calibrated and directly rgb to XYZ
 %Convert patches to Cielab
-LabDataWhiteCalibrated =rgb2lab(ColorDataWhiteCalibrated,'WhitePoint','d65');
-[MeanCal, MaxCAl] = Ediff(LabDataWhiteCalibrated,ColorDataRef);
+HueColorsLab =rgb2lab(HueColors,'WhitePoint','d65');
+[HueMean, HueMax] = Ediff(HueColorsLab,HueColorRefLab);
 
-LabData =rgb2lab(ColorData,'WhitePoint','d65');
-[MeanUnCal, MaxUnCAl] = Ediff(LabData,ColorDataRef);
+ColorsLab =rgb2lab(Colors,'WhitePoint','d65');
+[ColorsMean, ColorsMax] = Ediff(ColorsLab,ColorRefLab);
 
 %% Calculate difference between White calibrated and not white calibrated and rgb->xyz->lab
 
-XYZDataWhiteCalibrated = rgb2xyz(ColorDataWhiteCalibrated,'WhitePoint','d65');
-LabDataWhiteCalibrated = xyz2lab(XYZDataWhiteCalibrated,'WhitePoint','d65');
-[MeanCal, MaxCAl] = Ediff(LabDataWhiteCalibrated,ColorDataRef);
+HueColorsXYZ = rgb2xyz(HueColors,'WhitePoint','d65');
+HueColorsLab = xyz2lab(HueColorsXYZ,'WhitePoint','d65');
+[HueMean, HueMax] = Ediff(HueColorsLab,HueColorRefLab);
 
 
-XYZData = rgb2xyz(ColorData,'WhitePoint','d65');
-LabData = xyz2lab(XYZData,'WhitePoint','d65');
-[MeanUnCal, MaxUnCAl] = Ediff(LabData,ColorDataRef);
+ColorsXYZ = rgb2xyz(Colors,'WhitePoint','d65');
+ColorsLab = xyz2lab(ColorsXYZ,'WhitePoint','d65');
+[ColorsMean, ColorsMax] = Ediff(ColorsLab,ColorRefLab);
+
+ColorsV2XYZ = rgb2xyz(ColorsV2,'WhitePoint','d65');
+ColorsV2Lab = xyz2lab(ColorsV2XYZ,'WhitePoint','d65');
+[ColorsV2Mean, ColorsV2Max] = Ediff(ColorsV2Lab,ColorPatches);
 
 
 %% Prim rose inversion
-A = pinv(ColorDataWhiteCalibrated)*ColorDataRefXYZ;
+A = pinv(HueColors)*HueColorRefXYZ;
+HueColorsXYZ =HueColors*A;
+HueColorsLab = xyz2lab(HueColorsXYZ,'WhitePoint','d65');
+[HueMean, HueMax] = Ediff(HueColorsLab,HueColorRefLab);
 
-XYZ_cal =ColorDataWhiteCalibrated*A;
-LabData = xyz2lab(XYZ_cal,'WhitePoint','d65');
-[Value_mean, Value_max] = Ediff(LabData,ColorDataRef);
-
-
+A = pinv(Colors)*ColorRefLab;
+ColorsXYZ =Colors*A;
+ColorsLab = xyz2lab(ColorsXYZ,'WhitePoint','d65');
+[ColorsMean, ColorsMax] = Ediff(ColorsLab,ColorRefLab);
 
 %% Regression
 
-A = Optimize_poly(ColorDataWhiteCalibrated', ColorDataRefXYZ');
+A = Optimize_poly(HueColors', HueColorRefXYZ');
+HueColorsXYZ =Polynomial_regression(HueColors',A)';
+HueColorsLab = xyz2lab(HueColorsXYZ,'WhitePoint','d65');
+[HueMean, HueMax] = Ediff(HueColorsLab,HueColorRefLab);
 
-%Calulate with the matrix 
-XYZ_cal_D65 =Polynomial_regression(ColorDataWhiteCalibrated',A)';
-LabData = xyz2lab(XYZ_cal_D65,'WhitePoint','d65');
-[Value_mean, Value_max] = Ediff(LabData,ColorDataRef);
+A = Optimize_poly(Colors', ColorRefXYZ');
+ColorsXYZ =Polynomial_regression(Colors',A)';
+ColorsLab = xyz2lab(ColorsXYZ,'WhitePoint','d65');
+[ColorsMean, ColorsMax] = Ediff(ColorsLab,ColorRefLab);
 
+%% Signal dep Regression
 
+A = Optimize_poly_SignalDep(HueColors', HueColorRefXYZ');
+HueColorsXYZ =Polynomial_regression_SignalDep(HueColors',A)';
+HueColorsLab = xyz2lab(HueColorsXYZ,'WhitePoint','d65');
+[HueMean, HueMax] = Ediff(HueColorsLab,HueColorRefLab);
 
+A = Optimize_poly_SignalDep(Colors', ColorRefXYZ');
+ColorsXYZ =Polynomial_regression_SignalDep(Colors',A)';
+ColorsLab = xyz2lab(ColorsXYZ,'WhitePoint','d65');
+[ColorsMean, ColorsMax] = Ediff(ColorsLab,ColorRefLab);
 %% Find best 20 samples
-[best, ColorIndex] = Generic(HueColors,HueColorRefLab, 10, 2000);
+clear best
+clear ColorIndex
+[best, ColorIndex] = Generic(ColorsV2,ColorV2RefLab, 40, 1000);
 
 
 %%
@@ -59,8 +84,6 @@ LabData = xyz2lab(XYZ_cal_D65,'WhitePoint','d65');
 ColorsChosen =HueColors(ColorIndex(1,:),:);
 
 showRGB(ColorsChosen)
-
-
 
 
 
