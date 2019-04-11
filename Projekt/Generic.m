@@ -20,7 +20,7 @@ function [BestValue,BestIndex ] = Generic(ColorData,ColorRefLab, NrOfSamples, Ma
             A = Optimize_poly(ColorGene', ColorDataRefXYZ(GeneIndex(j,:),:)');
             XYZ_cal_D65 =Polynomial_regression(ColorData',A)';
             LabData = xyz2lab(XYZ_cal_D65,'WhitePoint','d65');
-            [Mean, Max] = Ediff(LabData,ColorRefLab);
+            [Mean, Max, diff] = Ediff(LabData,ColorRefLab);
             Best(j,:) = [Mean, Max];
         end
         %FInd the Seed with the best Delta E
@@ -35,6 +35,14 @@ function [BestValue,BestIndex ] = Generic(ColorData,ColorRefLab, NrOfSamples, Ma
         end
     end
     
+    %Get the diff for the best
+    ColorGene = ColorData(GeneIndex(1,:),:);
+              
+    %Create the matrix for transforming RGB to XYZ
+    A = Optimize_poly(ColorGene', ColorDataRefXYZ(GeneIndex(1,:),:)');
+    XYZ_cal_D65 =Polynomial_regression(ColorData',A)';
+    LabData = xyz2lab(XYZ_cal_D65,'WhitePoint','d65');
+    [Mean, Max, diff] = Ediff(LabData,ColorRefLab);
     
     
     BestValue =Best(Index,:);

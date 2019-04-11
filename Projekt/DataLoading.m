@@ -1,4 +1,4 @@
-function [HueColorRefXYZ,HueColorRefLab,HueColors, ColorRefXYZ, ColorRefLab, Colors,ColorReV2fXYZ, ColorV2RefLab, ColorsV2 ] = DataLoading()
+function [HueColorRefXYZ,HueColorRefLab,HueColors, ColorRefXYZ, ColorRefLab, Colors,ColorRefV2XYZ, ColorV2RefLab, ColorsV2 ] = DataLoading()
     %Load referens data for the HueColor
     load('HueColor.mat');
     HueColorRefLab = HueColor;
@@ -56,7 +56,7 @@ function [HueColorRefXYZ,HueColorRefLab,HueColors, ColorRefXYZ, ColorRefLab, Col
     % Get XYZ ref for both colors
     HueColorRefXYZ = lab2xyz(HueColorRefLab);
     ColorRefXYZ = lab2xyz(ColorRefLab);
-    ColorReV2fXYZ = lab2xyz(ColorRefLab);
+    ColorRefV2XYZ = lab2xyz(ColorV2RefLab);
 
     
     
